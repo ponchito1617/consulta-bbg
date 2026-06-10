@@ -190,6 +190,31 @@ function fechaPasada(valor) {
     return fecha < hoy;
 }
 
+function logConsultaServidor(registro) {
+    if (!registro || !registro.cct) return;
+
+    const payload = {
+        cct: registro.cct,
+        escuela: registro.escuela || "Sin nombre"
+    };
+
+    fetch("/api/log-query", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.warn("No se pudo registrar la consulta en el servidor.");
+        }
+    })
+    .catch(error => {
+        console.warn("Error de red al registrar la consulta:", error);
+    });
+}
+
 function obtenerHorario(registro) {
     const inicio = formatearHora(registro.hora_inicio || registro.horaInicio || registro["Hora Inicio"] || registro["hora inicio"] || registro.hora_atencion);
     const fin = formatearHora(registro.hora_final || registro.hora_fin || registro.horaFinal || registro["Hora Final"] || registro["hora fin"] || registro.hora_atencion);
@@ -250,6 +275,8 @@ function buscarCCT() {
 
         return;
     }
+
+    logConsultaServidor(registro);
 
     const alertaFecha = fechaPasada(registro.fecha_atencion)
         ? `
