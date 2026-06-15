@@ -242,7 +242,10 @@ function logConsultaServidor(registro) {
 
     const payload = {
         cct: registro.cct,
-        escuela: registro.escuela || "Sin nombre"
+        escuela: registro.escuela || registro.nombre || "Sin nombre",
+        sare: registro.SARE || registro.sare || "No disponible",
+        municipio: registro.municipio || "No disponible",
+        localidad: registro.localidad || "No disponible"
     };
 
     fetch("/api/log-query", {
@@ -347,9 +350,28 @@ function buscarCCT() {
 
         </div>
 
+        <div class="mensaje-exito" style="margin: 0 0 16px; padding: 12px; border-radius: 8px; background: #e8f6ec; color: #1d6f3f; border: 1px solid #cce8d6;">
+            ✅ Consulta registrada correctamente.
+        </div>
+
         ${alertaFecha}
 
         <div class="tarjeta-cuerpo">
+
+            <div class="campo">
+                <span class="etiqueta">SARE</span>
+                <span class="valor">${registro.SARE || registro.sare || "No disponible"}</span>
+            </div>
+
+            <div class="campo">
+                <span class="etiqueta">Municipio</span>
+                <span class="valor">${registro.municipio || "No disponible"}</span>
+            </div>
+
+            <div class="campo">
+                <span class="etiqueta">Localidad</span>
+                <span class="valor">${registro.localidad || "No disponible"}</span>
+            </div>
 
             <div class="campo">
                 <span class="etiqueta">Programa</span>
@@ -407,4 +429,6 @@ function buscarCCT() {
     </div>
 
     `;
+
+    resultado.scrollIntoView({ behavior: "smooth", block: "start" });
 }

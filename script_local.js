@@ -195,7 +195,10 @@ function logConsultaServidor(registro) {
 
     const payload = {
         cct: registro.cct,
-        escuela: registro.escuela || "Sin nombre"
+        escuela: registro.escuela || registro.nombre || "Sin nombre",
+        sare: registro.SARE || registro.sare || "No disponible",
+        municipio: registro.municipio || "No disponible",
+        localidad: registro.localidad || "No disponible"
     };
 
     fetch("/api/log-query", {
@@ -305,6 +308,21 @@ function buscarCCT() {
         <div class="tarjeta-cuerpo">
 
             <div class="campo">
+                <span class="etiqueta">SARE</span>
+                <span class="valor">${registro.SARE || registro.sare || "No disponible"}</span>
+            </div>
+
+            <div class="campo">
+                <span class="etiqueta">Municipio</span>
+                <span class="valor">${registro.municipio || "No disponible"}</span>
+            </div>
+
+            <div class="campo">
+                <span class="etiqueta">Localidad</span>
+                <span class="valor">${registro.localidad || "No disponible"}</span>
+            </div>
+
+            <div class="campo">
                 <span class="etiqueta">Programa</span>
                 <span class="valor">${registro.programa}</span>
             </div>
@@ -360,4 +378,6 @@ function buscarCCT() {
     </div>
 
     `;
+
+    resultado.scrollIntoView({ behavior: "smooth", block: "start" });
 }

@@ -97,8 +97,15 @@ function renderConsultas(lista, limite) {
         <ul>
             ${subset.map(item => `
                 <li>
-                    <span>${item.escuela} (${item.cct})</span>
-                    <span>${item.contador} consulta${item.contador === 1 ? "" : "s"}</span>
+                    <div class="consulta-item">
+                        <span class="consulta-titulo">${item.escuela} (${item.cct})</span>
+                        <span>${item.contador} consulta${item.contador === 1 ? "" : "s"}</span>
+                    </div>
+                    <div class="consulta-meta">
+                        <span>SARE: ${item.sare || "No disponible"}</span>
+                        <span>Municipio: ${item.municipio || "No disponible"}</span>
+                        <span>Localidad: ${item.localidad || "No disponible"}</span>
+                    </div>
                 </li>
             `).join("")}
         </ul>
@@ -171,6 +178,9 @@ async function descargarReporteExcel() {
     const hoja = topConsultas.map(item => ({
         CCT: item.cct,
         Escuela: item.escuela,
+        SARE: item.sare || "No disponible",
+        Municipio: item.municipio || "No disponible",
+        Localidad: item.localidad || "No disponible",
         Consultas: item.contador
     }));
 

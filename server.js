@@ -34,10 +34,16 @@ async function initDatabase() {
                     id SERIAL PRIMARY KEY,
                     cct TEXT UNIQUE NOT NULL,
                     escuela TEXT,
+                    sare TEXT,
+                    municipio TEXT,
+                    localidad TEXT,
                     contador INTEGER DEFAULT 1,
                     ultima_consulta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             `);
+            await pgPool.query(`ALTER TABLE consultas ADD COLUMN IF NOT EXISTS sare TEXT`);
+            await pgPool.query(`ALTER TABLE consultas ADD COLUMN IF NOT EXISTS municipio TEXT`);
+            await pgPool.query(`ALTER TABLE consultas ADD COLUMN IF NOT EXISTS localidad TEXT`);
             console.log("✅ Base de datos PostgreSQL conectada");
         } catch (err) {
             console.error("Error al inicializar PostgreSQL:", err);
@@ -54,13 +60,44 @@ async function initDatabase() {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         cct TEXT UNIQUE NOT NULL,
                         escuela TEXT,
+                        sare TEXT,
+                        municipio TEXT,
+                        localidad TEXT,
                         contador INTEGER DEFAULT 1,
                         ultima_consulta DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
-                `);
+                `, (createErr) => {
+                    if (createErr) {
+                        console.error("Error creando tabla consultas:", createErr);
+                        return;
+                    }
+                    ensureSqliteColumns();
+                });
             }
         });
     }
+}
+
+function ensureSqliteColumns() {
+    db.all(`PRAGMA table_info(consultas)`, (err, rows) => {
+        if (err) {
+            console.error("Error consultando columnas de SQLite:", err);
+            return;
+        }
+
+        const columns = rows.map(row => row.name);
+        const needed = ["sare", "municipio", "localidad"];
+
+        needed.forEach((column) => {
+            if (!columns.includes(column)) {
+                db.run(`ALTER TABLE consultas ADD COLUMN ${column} TEXT`, (alterErr) => {
+                    if (alterErr) {
+                        console.error(`Error añadiendo columna ${column}:`, alterErr);
+                    }
+                });
+            }
+        });
+    });
 }
 
 app.use(express.json());
@@ -84,23 +121,30 @@ function checkAuth(req, res, next) {
 }
 
 app.post("/api/log-query", async (req, res) => {
-    const { cct, escuela } = req.body;
+    const { cct, escuela, sare, municipio, localidad } = req.body;
     if (!cct) {
         return res.status(400).json({ error: "Falta el CCT" });
     }
 
     const clave = String(cct).trim().toUpperCase();
     const escuelaNombre = escuela || "Sin nombre";
+    const sareValor = sare || "No disponible";
+    const municipioValor = municipio || "No disponible";
+    const localidadValor = localidad || "No disponible";
 
     if (usePostgres) {
         try {
             await pgPool.query(
-                `INSERT INTO consultas (cct, escuela, contador, ultima_consulta)
-                 VALUES ($1, $2, 1, CURRENT_TIMESTAMP)
+                `INSERT INTO consultas (cct, escuela, sare, municipio, localidad, contador, ultima_consulta)
+                 VALUES ($1, $2, $3, $4, $5, 1, CURRENT_TIMESTAMP)
                  ON CONFLICT (cct) DO UPDATE
                  SET contador = consultas.contador + 1,
-                     ultima_consulta = CURRENT_TIMESTAMP`,
-                [clave, escuelaNombre]
+                     ultima_consulta = CURRENT_TIMESTAMP,
+                     escuela = EXCLUDED.escuela,
+                     sare = EXCLUDED.sare,
+                     municipio = EXCLUDED.municipio,
+                     localidad = EXCLUDED.localidad`,
+                [clave, escuelaNombre, sareValor, municipioValor, localidadValor]
             );
             return res.json({ ok: true });
         } catch (err) {
@@ -110,9 +154,16 @@ app.post("/api/log-query", async (req, res) => {
     }
 
     db.run(
-        `INSERT INTO consultas (cct, escuela) VALUES (?, ?)
-         ON CONFLICT(cct) DO UPDATE SET contador = contador + 1, ultima_consulta = CURRENT_TIMESTAMP`,
-        [clave, escuelaNombre],
+        `INSERT INTO consultas (cct, escuela, sare, municipio, localidad)
+         VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(cct) DO UPDATE SET
+             contador = contador + 1,
+             ultima_consulta = CURRENT_TIMESTAMP,
+             escuela = excluded.escuela,
+             sare = excluded.sare,
+             municipio = excluded.municipio,
+             localidad = excluded.localidad`,
+        [clave, escuelaNombre, sareValor, municipioValor, localidadValor],
         (err) => {
             if (err) {
                 console.error("Error registrando consulta:", err);
@@ -142,7 +193,7 @@ app.get("/api/queries/top", checkAuth, async (req, res) => {
     if (usePostgres) {
         try {
             const result = await pgPool.query(
-                `SELECT cct, escuela, contador, ultima_consulta
+                `SELECT cct, escuela, sare, municipio, localidad, contador, ultima_consulta
                  FROM consultas
                  ORDER BY contador DESC
                  LIMIT 100`
@@ -155,7 +206,7 @@ app.get("/api/queries/top", checkAuth, async (req, res) => {
     }
 
     db.all(
-        `SELECT cct, escuela, contador, ultima_consulta 
+        `SELECT cct, escuela, sare, municipio, localidad, contador, ultima_consulta 
          FROM consultas 
          ORDER BY contador DESC 
          LIMIT 100`,
