@@ -1,0 +1,20 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/consulta-bbg:$SHORT_SHA', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/consulta-bbg:$SHORT_SHA']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy consulta-bbg \
+          --image gcr.io/$PROJECT_ID/consulta-bbg:$SHORT_SHA \
+          --region us-central1 \
+          --platform managed \
+          --quiet \
+          --allow-unauthenticated
+
+# images is optional but helpful for visibility in Cloud Build
+images:
+  - 'gcr.io/$PROJECT_ID/consulta-bbg:$SHORT_SHA'
