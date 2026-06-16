@@ -15,6 +15,9 @@ steps:
           --quiet \
           --allow-unauthenticated
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 # images is optional but helpful for visibility in Cloud Build
 images:
   - 'gcr.io/$PROJECT_ID/consulta-bbg:$SHORT_SHA'
