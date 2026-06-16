@@ -10,10 +10,10 @@ services:
     autoDeploy: true
     envVars:
       - key: ADMIN_PASSWORD
-        scope: build
+        scope: runtime
         value: admin1234
       - key: DATABASE_URL
-        scope: build
+        scope: runtime
         fromDatabase:
           name: consulta-bbg-postgres
           property: connectionString
