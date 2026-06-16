@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.gcloudignore
+README.md
+logs
+data_local.json
+excel
+docs
+admin
+.env
+.env.*
+*.db
+*.sqlite
