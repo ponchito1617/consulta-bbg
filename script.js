@@ -53,6 +53,16 @@ document
 
     });
 
+const socialToggle = document.getElementById('socialToggle');
+const socialMenu = document.getElementById('socialMenu');
+if (socialToggle && socialMenu) {
+    socialToggle.addEventListener('click', () => {
+        const isOpen = socialMenu.classList.toggle('open');
+        socialToggle.setAttribute('aria-expanded', String(isOpen));
+        socialMenu.setAttribute('aria-hidden', String(!isOpen));
+    });
+}
+
 // =====================
 // FORMATEAR FECHA
 // =====================
@@ -237,6 +247,30 @@ function fechaPasada(valor) {
     return fecha < hoy;
 }
 
+function normalizeKey(key) {
+    return String(key)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+        .replace(/[^a-z0-9_]/g, "");
+}
+
+function getVal(obj, ...keys) {
+    const normalized = {};
+    for (const key of Object.keys(obj)) {
+        normalized[normalizeKey(key)] = obj[key];
+    }
+
+    for (const k of keys) {
+        if (!k) continue;
+        const normalizedKey = normalizeKey(k);
+        if (Object.prototype.hasOwnProperty.call(normalized, normalizedKey) && normalized[normalizedKey] !== null && normalized[normalizedKey] !== undefined && String(normalized[normalizedKey]).trim() !== "") {
+            return normalized[normalizedKey];
+        }
+    }
+    return null;
+}
+
 function logConsultaServidor(registro) {
     if (!registro || !registro.cct) return;
 
@@ -328,7 +362,12 @@ function buscarCCT() {
 
     logConsultaServidor(registro);
 
-    const alertaFecha = fechaPasada(registro.fecha_atencion)
+    const fi = getVal(registro, 'fecha_inicio', 'fecha_inicio_excel', 'fechaInicio', 'fecha inicio', 'fecha fin', 'fecha_fin', 'fecha de inicio');
+    const ff = getVal(registro, 'fecha_final', 'fechaFinal', 'fecha_fin', 'fecha fin', 'fecha de fin');
+    const hi = getVal(registro, 'hora_inicio', 'horaInicio', 'hora_inicio', 'hora de inicio', 'hora de incio', 'HORA DE INCIO');
+    const hf = getVal(registro, 'hora_final', 'horaFinal', 'hora_final', 'hora de final', 'HORA FINAL');
+
+    const alertaFecha = fechaPasada(ff || fi)
         ? `
         <div class="mensaje-advertencia">
             <strong>⚠️ Fecha de atención vencida</strong>
@@ -338,13 +377,46 @@ function buscarCCT() {
         `
         : "";
 
+    const programa = getVal(registro, 'programa', 'Programa') || 'No disponible';
+    const sede = getVal(registro, 'sede', 'Sede') || 'No disponible';
+    const sare = getVal(registro, 'sare', 'SARE') || 'No disponible';
+    const municipio = getVal(registro, 'municipio', 'Municipio') || 'No disponible';
+    const localidad = getVal(registro, 'localidad', 'Localidad') || 'No disponible';
+    const telefono = getVal(registro, 'telefono', 'tel', 'telefono_contacto', 'telefono_de_contacto', 'telefono de contacto', 'telefono_contacto_escuela', 'celular') || 'No disponible';
+
+    let fechaDisplay = 'No disponible';
+    if (fi && ff) {
+        fechaDisplay = `Del ${formatDateLongES(fi)} al ${formatDateLongES(ff)}`;
+    } else if (fi) {
+        fechaDisplay = `Inicio: ${formatDateLongES(fi)}`;
+    } else if (ff) {
+        fechaDisplay = `Final: ${formatDateLongES(ff)}`;
+    }
+
+    const horario = (hi || hf)
+        ? hi && hf
+            ? `${formatearHora(hi) || 'No disponible'} - ${formatearHora(hf) || 'No disponible'}`
+            : hi
+                ? `Inicio: ${formatearHora(hi)}`
+                : `Final: ${formatearHora(hf)}`
+        : 'No disponible';
+    const comite = getVal(registro, 'estatus_comite', 'comite', 'Comité') || 'No disponible';
+    const referencia = getVal(registro, 'referencia', 'referencia_direccion') || 'No disponible';
+
+    const lat = getVal(registro, 'lat', 'LAT', 'latitud');
+    const lon = getVal(registro, 'lon', 'LON', 'longitud');
+
+    const mapaHtml = (lat && lon)
+        ? `<a class="btn-mapa" href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" rel="noopener">📍 VER UBICACIÓN EN GOOGLE MAPS</a>`
+        : `<span class="btn-mapa" aria-disabled="true" style="opacity:.7;cursor:default;">📍 UBICACIÓN NO DISPONIBLE</span>`;
+
     resultado.innerHTML = `
 
     <div class="tarjeta-resultado">
 
         <div class="tarjeta-header">
 
-            <h2>${registro.escuela}</h2>
+            <h2>${registro.escuela || registro.nombre || 'Sin nombre'}</h2>
 
             <div>${registro.cct}</div>
 
@@ -360,54 +432,55 @@ function buscarCCT() {
 
             <div class="campo">
                 <span class="etiqueta">Programa</span>
-                <span class="valor">${registro.programa}</span>
+                <span class="valor">${programa}</span>
+            </div>
+
+            <div class="campo">
+                <span class="etiqueta">SARE</span>
+                <span class="valor">${sare}</span>
             </div>
 
             <div class="campo">
                 <span class="etiqueta">Sede de Atención</span>
-                <span class="valor">${registro.sede}</span>
+                <span class="valor">${sede}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Fecha</span>
-                <span class="valor">
-                    ${formatearFecha(registro.fecha_atencion)}
-                </span>
+                <span class="etiqueta">Municipio</span>
+                <span class="valor">${municipio}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Horario</span>
-                <span class="valor">
-                    ${obtenerHorario(registro)}
-                </span>
+                <span class="etiqueta">Localidad</span>
+                <span class="valor">${localidad}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">
-                    Comité de Contraloría Social
-                </span>
-                <span class="valor">
-                    ${registro.estatus_comite}
-                </span>
+                <span class="etiqueta">Teléfono de contacto</span>
+                <span class="valor">${telefono}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">
-                    Referencia
-                </span>
-                <span class="valor">
-                    ${registro.referencia}
-                </span>
+                <span class="etiqueta">Fecha de inicio / final</span>
+                <span class="valor">${fechaDisplay}</span>
             </div>
 
-            <a
-                class="btn-mapa"
-                href="https://www.google.com/maps?q=${registro.lat},${registro.lon}"
-                target="_blank">
+            <div class="campo">
+                <span class="etiqueta">Horario inicio / final</span>
+                <span class="valor">${horario}</span>
+            </div>
 
-                📍 VER UBICACIÓN EN GOOGLE MAPS
+            <div class="campo">
+                <span class="etiqueta">Comité de Contraloría Social</span>
+                <span class="valor">${comite}</span>
+            </div>
 
-            </a>
+            <div class="campo">
+                <span class="etiqueta">Referencia</span>
+                <span class="valor">${referencia}</span>
+            </div>
+
+            ${mapaHtml}
 
         </div>
 
@@ -416,4 +489,27 @@ function buscarCCT() {
     `;
 
     resultado.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function formatDateLongES(valor){
+    // Return long spanish date or range; handles Excel serials, ISO and dd/mm/yyyy
+    if (valor === null || valor === undefined || valor === "") return "No disponible";
+
+    // Range handling if value contains a separator
+    if (typeof valor === 'string' && valor.includes(' - ')){
+        const parts = valor.split(' - ').map(p=>p.trim());
+        return `Del ${formatDateLongES(parts[0])} al ${formatDateLongES(parts[1])}`;
+    }
+
+    let fecha = null;
+    if (typeof valor === 'number' && !isNaN(valor)) {
+        fecha = new Date((valor - 25569) * 86400 * 1000);
+    } else {
+        fecha = parseFechaDate(valor);
+    }
+
+    if (!fecha || isNaN(fecha)) return (typeof valor === 'string') ? valor : 'No disponible';
+
+    const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+    return fecha.toLocaleDateString('es-MX', opciones);
 }
