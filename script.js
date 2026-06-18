@@ -362,10 +362,10 @@ function buscarCCT() {
 
     logConsultaServidor(registro);
 
-    const fi = getVal(registro, 'fecha_inicio', 'fecha_inicio_excel', 'fechaInicio', 'fecha inicio', 'fecha fin', 'fecha_fin', 'fecha de inicio');
-    const ff = getVal(registro, 'fecha_final', 'fechaFinal', 'fecha_fin', 'fecha fin', 'fecha de fin');
-    const hi = getVal(registro, 'hora_inicio', 'horaInicio', 'hora_inicio', 'hora de inicio', 'hora de incio', 'HORA DE INCIO');
-    const hf = getVal(registro, 'hora_final', 'horaFinal', 'hora_final', 'hora de final', 'HORA FINAL');
+    const fi = getVal(registro, 'fecha_inicio', 'fecha_inicio_excel', 'fechaInicio', 'fecha inicio', 'fecha de inicio', 'fecha_atencion');
+    const ff = getVal(registro, 'fecha_final', 'fechaFinal', 'fecha_fin', 'fecha fin', 'fecha de fin', 'fecha_atencion');
+    const hi = getVal(registro, 'hora_inicio', 'horaInicio', 'hora de inicio', 'hora de incio', 'HORA DE INCIO');
+    const hf = getVal(registro, 'hora_final', 'horaFinal', 'hora de final', 'HORA FINAL');
 
     const alertaFecha = fechaPasada(ff || fi)
         ? `
