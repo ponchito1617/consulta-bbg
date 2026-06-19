@@ -483,6 +483,13 @@ function buscarCCT() {
             <hr class="divider" />
 
             <div class="info-block">
+                <div class="block-title">🤝 Comité de Contraloría Social</div>
+                <span class="field-value">${comite}</span>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="info-block">
                 <div class="block-title">📞 Contacto</div>
                 <span class="field-value">${telefonoFormateado}</span>
             </div>
