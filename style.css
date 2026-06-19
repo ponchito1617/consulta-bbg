@@ -417,76 +417,61 @@ main{
 /* Social float (desktop) */
 .social-float{
     position:fixed;
-    left:18px;
     top:50%;
+    left:0;
     transform:translateY(-50%);
     display:flex;
     flex-direction:column;
     gap:12px;
     z-index:1000;
 }
+
 .social-item{
     display:flex;
     align-items:center;
-    justify-content:space-between;
     width:56px;
-    min-height:56px;
-    padding:0 10px;
-    color:#fff;
-    border-radius:999px;
-    text-decoration:none;
-    box-shadow:0 8px 20px rgba(0,0,0,.12);
-    transition:width .28s ease, padding .28s ease, box-shadow .28s ease, background .28s ease;
+    height:56px;
+    padding:0 14px;
+    border-radius:50px;
     overflow:hidden;
-}
-.social-item .label{
-    flex:0 0 auto;
-    width:0;
-    opacity:0;
-    visibility:hidden;
-    margin-right:0;
-    font-weight:700;
-    font-size:14px;
-    line-height:1.2;
-    text-align:left;
     white-space:nowrap;
-    overflow:hidden;
-    transition:width .28s ease, opacity .28s ease, margin .28s ease;
+    justify-content:center;
+    text-decoration:none;
+    color:#fff;
+    transition:all 0.3s ease;
 }
+
 .social-item .icon{
     display:flex;
     align-items:center;
     justify-content:center;
-    width:40px;
-    height:40px;
-    min-width:40px;
-    border-radius:999px;
-    background:rgba(255,255,255,.15);
 }
+
 .social-item .icon i{
-    font-size:18px;
-    line-height:1;
+    font-size:20px;
 }
+
+.social-item .label{
+    margin-left:12px;
+    opacity:0;
+    transition:opacity 0.3s ease;
+}
+
 .social-item:hover{
     width:180px;
-    padding:0 16px;
-    box-shadow:0 14px 36px rgba(0,0,0,.18);
+    justify-content:flex-start;
 }
+
 .social-item:hover .label{
-    width:auto;
     opacity:1;
-    visibility:visible;
-    margin-right:12px;
 }
+
 .social-item.whatsapp{
     background:#25D366;
 }
+
 .social-item.facebook{
     background:#1877F2;
-}
-.social-item.whatsapp:hover .icon,
-.social-item.facebook:hover .icon{
-    background:rgba(255,255,255,.25);
 }
 
 @media (max-width: 768px) {
@@ -793,24 +778,22 @@ main{
 }
 
 .social-item.facebook .icon{
-
-    background:#1877F2;
-    color:white;
-}
-
-@media (max-width: 920px) {
-    .social-float{
-        left:10px;
+        background:#1877F2;
+        color:white;
     }
-    .social-item{
-        width:50px;
-        padding:10px 12px 10px 10px;
-    }
-    .social-item:hover{
-        width:170px;
-    }
-}
 
+    @media (max-width: 920px) {
+        .social-float{
+            left:10px;
+        }
+        .social-item{
+            width:50px;
+            padding:0 12px;
+        }
+        .social-item:hover{
+            width:170px;
+        }
+    }
 .hidden{
 
     display:none;
