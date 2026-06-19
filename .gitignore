@@ -1,6 +1,9 @@
 node_modules/
-data/
-!data/data.json
+
+# Keep data folder but only track consultas.json (avoid committing other data files/backups)
+data/*
+!data/consultas.json
+
 logs/
 .DS_Store
 *.db
