@@ -428,12 +428,11 @@ main{
 .social-item{
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    min-width:72px;
-    width:72px;
+    justify-content:flex-start;
+    gap:12px;
+    width:56px;
+    min-height:56px;
     padding:0 12px;
-    background:var(--vino);
     color:#fff;
     border-radius:999px;
     text-decoration:none;
@@ -442,13 +441,14 @@ main{
     overflow:hidden;
 }
 .social-item .label{
-    display:block;
+    flex:1;
     opacity:0;
     visibility:hidden;
     font-weight:700;
     font-size:14px;
+    line-height:1.2;
+    text-align:left;
     transition:opacity .28s ease;
-    text-transform:none;
 }
 .social-item .icon{
     display:flex;
@@ -458,7 +458,7 @@ main{
     height:40px;
     min-width:40px;
     border-radius:999px;
-    background:rgba(255,255,255,.12);
+    background:rgba(255,255,255,.15);
 }
 .social-item .icon i{
     font-size:18px;
@@ -466,7 +466,7 @@ main{
 }
 .social-item:hover{
     width:180px;
-    padding:0 18px;
+    padding:0 16px;
     box-shadow:0 14px 36px rgba(0,0,0,.18);
 }
 .social-item:hover .label{
@@ -479,11 +479,9 @@ main{
 .social-item.facebook{
     background:#1877F2;
 }
-.social-item.whatsapp .icon{
-    background:rgba(255,255,255,.15);
-}
-.social-item.facebook .icon{
-    background:rgba(255,255,255,.15);
+.social-item.whatsapp:hover .icon,
+.social-item.facebook:hover .icon{
+    background:rgba(255,255,255,.25);
 }
 
 @media (max-width: 768px) {
