@@ -556,3 +556,40 @@ function formatAddressLines(referencia) {
     const partes = texto.split(/[,;]+/).map(p => p.trim()).filter(Boolean);
     return partes.length ? partes : [texto];
 }
+
+// FAB móvil: abrir/cerrar opciones sociales
+(function initFAB(){
+    try {
+        const fab = document.getElementById('fab');
+        const fabMain = document.getElementById('fabMain');
+        const fabOptions = document.getElementById('fabOptions');
+        if (!fab || !fabMain || !fabOptions) return;
+
+        function closeFab(){
+            fab.classList.remove('open');
+            fab.setAttribute('aria-hidden', 'true');
+            fabOptions.setAttribute('aria-hidden', 'true');
+        }
+
+        function openFab(){
+            fab.classList.add('open');
+            fab.setAttribute('aria-hidden', 'false');
+            fabOptions.setAttribute('aria-hidden', 'false');
+        }
+
+        fabMain.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (fab.classList.contains('open')) closeFab(); else openFab();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!fab.contains(e.target)) closeFab();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeFab();
+        });
+    } catch (err) {
+        console.error('Error inicializando FAB:', err);
+    }
+})();

@@ -47,6 +47,49 @@ if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 
+const jsonPath = path.join(__dirname, "data", "consultas.json");
+let jsonStore = {}; // mapping cct -> record
+
+function ensureJsonFile() {
+    try {
+        if (!fs.existsSync(jsonPath)) {
+            fs.writeFileSync(jsonPath, JSON.stringify([]), { encoding: "utf8" });
+        }
+    } catch (err) {
+        console.error("Error asegurando consultas.json:", err);
+    }
+}
+
+function loadJsonStore() {
+    try {
+        if (!fs.existsSync(jsonPath)) return;
+        const raw = fs.readFileSync(jsonPath, { encoding: "utf8" });
+        const arr = JSON.parse(raw || "[]");
+        jsonStore = {};
+        if (Array.isArray(arr)) {
+            arr.forEach(item => {
+                if (item && item.cct) {
+                    jsonStore[String(item.cct).trim().toUpperCase()] = item;
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Error cargando consultas.json:", err);
+        jsonStore = {};
+    }
+}
+
+function writeJsonStoreAsync() {
+    try {
+        const arr = Object.values(jsonStore);
+        fs.writeFile(jsonPath, JSON.stringify(arr, null, 2), (err) => {
+            if (err) console.error("Error escribiendo consultas.json:", err);
+        });
+    } catch (err) {
+        console.error("Error en writeJsonStoreAsync:", err);
+    }
+}
+
 async function initDatabase() {
     if (usePostgres) {
         try {
@@ -98,6 +141,10 @@ async function initDatabase() {
         });
     }
 }
+
+// Cargar/asegurar store JSON después de inicializar carpeta
+ensureJsonFile();
+loadJsonStore();
 
 function ensureSqliteColumns() {
     db.all(`PRAGMA table_info(consultas)`, (err, rows) => {
@@ -167,6 +214,32 @@ app.post("/api/log-query", async (req, res) => {
                      localidad = EXCLUDED.localidad`,
                 [clave, escuelaNombre, sareValor, municipioValor, localidadValor]
             );
+            // Actualizar store JSON en paralelo
+            try {
+                const now = new Date().toISOString();
+                const existing = jsonStore[clave];
+                if (existing) {
+                    existing.contador = (Number(existing.contador) || 0) + 1;
+                    existing.ultima_consulta = now;
+                    existing.escuela = escuelaNombre;
+                    existing.sare = sareValor;
+                    existing.municipio = municipioValor;
+                    existing.localidad = localidadValor;
+                } else {
+                    jsonStore[clave] = {
+                        cct: clave,
+                        escuela: escuelaNombre,
+                        sare: sareValor,
+                        municipio: municipioValor,
+                        localidad: localidadValor,
+                        contador: 1,
+                        ultima_consulta: now
+                    };
+                }
+                writeJsonStoreAsync();
+            } catch (e) {
+                console.error('Error actualizando store JSON (Postgres):', e);
+            }
             return res.json({ ok: true });
         } catch (err) {
             console.error("Error registrando consulta en PostgreSQL:", err);
@@ -190,6 +263,32 @@ app.post("/api/log-query", async (req, res) => {
                 console.error("Error registrando consulta:", err);
                 return res.status(500).json({ error: "Error al registrar" });
             }
+            // Actualizar store JSON local
+            try {
+                const now = new Date().toISOString();
+                const existing = jsonStore[clave];
+                if (existing) {
+                    existing.contador = (Number(existing.contador) || 0) + 1;
+                    existing.ultima_consulta = now;
+                    existing.escuela = escuelaNombre;
+                    existing.sare = sareValor;
+                    existing.municipio = municipioValor;
+                    existing.localidad = localidadValor;
+                } else {
+                    jsonStore[clave] = {
+                        cct: clave,
+                        escuela: escuelaNombre,
+                        sare: sareValor,
+                        municipio: municipioValor,
+                        localidad: localidadValor,
+                        contador: 1,
+                        ultima_consulta: now
+                    };
+                }
+                writeJsonStoreAsync();
+            } catch (e) {
+                console.error('Error actualizando store JSON (SQLite):', e);
+            }
             res.json({ ok: true });
         }
     );
@@ -211,6 +310,16 @@ app.get("/api/logout", (req, res) => {
 });
 
 app.get("/api/queries/top", checkAuth, async (req, res) => {
+    // Si el store JSON tiene datos, priorizarlo para mantener persistencia simple
+    try {
+        if (Object.keys(jsonStore || {}).length > 0) {
+            const arr = Object.values(jsonStore).slice().sort((a, b) => (Number(b.contador) || 0) - (Number(a.contador) || 0)).slice(0, 100);
+            return res.json(arr);
+        }
+    } catch (e) {
+        console.error('Error procesando consultas desde JSON store:', e);
+    }
+
     if (usePostgres) {
         try {
             const result = await pgPool.query(

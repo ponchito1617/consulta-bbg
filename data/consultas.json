@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "cct": "TESTCCT1",
+    "escuela": "Escuela Prueba",
+    "sare": "SARE",
+    "municipio": "Mpio",
+    "localidad": "Loc",
+    "contador": 1,
+    "ultima_consulta": "2026-06-19T18:36:17.431Z"
+  }
+]
