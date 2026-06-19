@@ -535,6 +535,10 @@ function formatDateRangeES(inicio, fin) {
     const anioInicio = dateStart.getFullYear();
     const anioFin = dateEnd.getFullYear();
 
+    if (anioInicio === anioFin && mesInicio === mesFin && diaInicio === diaFin) {
+        return `${diaInicio} de ${mesInicio} de ${anioInicio}`;
+    }
+
     if (anioInicio === anioFin && mesInicio === mesFin) {
         return `Del ${diaInicio} al ${diaFin} de ${mesInicio} de ${anioInicio}`;
     }
