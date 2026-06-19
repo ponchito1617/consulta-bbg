@@ -428,11 +428,10 @@ main{
 .social-item{
     display:flex;
     align-items:center;
-    justify-content:flex-start;
-    gap:12px;
+    justify-content:space-between;
     width:56px;
     min-height:56px;
-    padding:0 12px;
+    padding:0 10px;
     color:#fff;
     border-radius:999px;
     text-decoration:none;
@@ -441,14 +440,18 @@ main{
     overflow:hidden;
 }
 .social-item .label{
-    flex:1;
+    flex:0 0 auto;
+    width:0;
     opacity:0;
     visibility:hidden;
+    margin-right:0;
     font-weight:700;
     font-size:14px;
     line-height:1.2;
     text-align:left;
-    transition:opacity .28s ease;
+    white-space:nowrap;
+    overflow:hidden;
+    transition:width .28s ease, opacity .28s ease, margin .28s ease;
 }
 .social-item .icon{
     display:flex;
@@ -470,8 +473,10 @@ main{
     box-shadow:0 14px 36px rgba(0,0,0,.18);
 }
 .social-item:hover .label{
+    width:auto;
     opacity:1;
     visibility:visible;
+    margin-right:12px;
 }
 .social-item.whatsapp{
     background:#25D366;
