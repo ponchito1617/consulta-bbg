@@ -256,41 +256,142 @@ main{
 .tarjeta-resultado{
 
     background:white;
-
-    border-radius:24px;
-
+    border-left:8px solid #611232;
+    border-radius:28px;
     overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.08);
+    max-width:980px;
+    margin:30px auto;
+}
 
-    border:1px solid rgba(98,17,50,.08);
+.tarjeta-content{
 
-    box-shadow:
-    0 12px 30px rgba(0,0,0,.05);
+    padding:32px 32px 26px;
+    display:grid;
+    gap:24px;
 }
 
 .tarjeta-header{
 
-    background:
-    linear-gradient(
-        135deg,
-        #621132,
-        #9D2449
-    );
-
-    color:white;
-
-    padding:30px;
+    padding:0;
 }
 
 .tarjeta-header h2{
 
     font-size:30px;
+    margin:0 0 10px;
+    color:#1f1f1f;
+}
 
+.tarjeta-subtitle{
+
+    font-size:15px;
+    color:#4f4f4f;
+    line-height:1.6;
     margin:0;
 }
 
-.tarjeta-cuerpo{
+.cct-label{
 
-    padding:30px;
+    font-size:13px;
+    color:#777;
+    margin-top:6px;
+}
+
+.info-block{
+
+    display:grid;
+    gap:18px;
+}
+
+.info-grid{
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.info-column{
+
+    display:grid;
+    gap:8px;
+}
+
+.block-title{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#611232;
+    font-size:14px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+}
+
+.block-main{
+
+    font-size:22px;
+    font-weight:800;
+    color:#1f1f1f;
+    line-height:1.2;
+}
+
+.field-group{
+
+    display:grid;
+    gap:6px;
+}
+
+.field-label{
+
+    color:#666;
+    font-size:13px;
+    font-weight:700;
+}
+
+.field-value{
+
+    color:#1f1f1f;
+    font-size:16px;
+    line-height:1.6;
+}
+
+.divider{
+
+    border:none;
+    border-top:1px solid rgba(98,17,50,.12);
+    margin:0;
+}
+
+.location-lines{
+
+    display:grid;
+    gap:6px;
+}
+
+.btn-mapa{
+
+    display:inline-block;
+    text-decoration:none;
+    background:#611232;
+    color:white;
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.25s ease;
+}
+
+.btn-mapa:hover{
+
+    background:#8b2447;
+}
+
+@media (max-width: 760px) {
+    .info-grid{
+        grid-template-columns: 1fr;
+    }
+    .tarjeta-content{
+        padding:24px;
+    }
 }
 
 .campo{

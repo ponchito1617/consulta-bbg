@@ -421,78 +421,70 @@ function buscarCCT() {
     const lat = getVal(registro, 'lat', 'LAT', 'latitud');
     const lon = getVal(registro, 'lon', 'LON', 'longitud');
 
+    const direccionLines = formatAddressLines(referencia);
     const mapaHtml = (lat && lon)
         ? `<a class="btn-mapa" href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" rel="noopener">📍 VER UBICACIÓN EN GOOGLE MAPS</a>`
-        : `<span class="btn-mapa" aria-disabled="true" style="opacity:.7;cursor:default;">📍 UBICACIÓN NO DISPONIBLE</span>`;
+        : "";
 
     resultado.innerHTML = `
 
     <div class="tarjeta-resultado">
 
-        <div class="tarjeta-header">
+        <div class="tarjeta-content">
 
-            <h2>${registro.escuela || registro.nombre || 'Sin nombre'}</h2>
-
-            <div>${registro.cct}</div>
-
-        </div>
-
-        <div class="mensaje-exito" style="margin: 0 0 16px; padding: 12px; border-radius: 8px; background: #e8f6ec; color: #1d6f3f; border: 1px solid #cce8d6;">
-            ✅ Consulta registrada correctamente.
-        </div>
-
-        ${alertaFecha}
-
-        <div class="tarjeta-cuerpo">
-
-            <div class="campo">
-                <span class="etiqueta">Programa</span>
-                <span class="valor">${programa}</span>
+            <div class="tarjeta-header">
+                <h2>${registro.escuela || registro.nombre || 'Sin nombre'}</h2>
+                <p class="tarjeta-subtitle">${programa}</p>
+                <p class="cct-label">CCT ${registro.cct}</p>
             </div>
 
-            <div class="campo">
-                <span class="etiqueta">SARE</span>
-                <span class="valor">${sare}</span>
+            <div class="mensaje-exito" style="margin: 0 0 16px; padding: 12px; border-radius: 8px; background: #e8f6ec; color: #1d6f3f; border: 1px solid #cce8d6;">
+                ✅ Consulta registrada correctamente.
             </div>
 
-            <div class="campo">
-                <span class="etiqueta">📍 Sede de Atención</span>
-                <span class="valor">${sede}</span>
+            ${alertaFecha}
+
+            <div class="info-block">
+                <div class="block-title">📍 Sede de atención</div>
+                <div class="block-main">${sede}</div>
             </div>
 
-            <div class="campo">
-                <span class="etiqueta">Municipio</span>
-                <span class="valor">${municipio}</span>
+            <hr class="divider" />
+
+            <div class="info-block info-grid">
+                <div class="info-column">
+                    <span class="block-title">📅 Periodo de atención</span>
+                    <span class="field-value">${fechaDisplay}</span>
+                </div>
+                <div class="info-column">
+                    <span class="block-title">🕒 Horario de atención</span>
+                    <span class="field-value">${horario}</span>
+                </div>
             </div>
 
-            <div class="campo">
-                <span class="etiqueta">Localidad</span>
-                <span class="valor">${localidad}</span>
+            <hr class="divider" />
+
+            <div class="info-block">
+                <div class="block-title">Ubicación</div>
+                <div class="field-group">
+                    <span class="field-label">Municipio</span>
+                    <span class="field-value">${municipio}</span>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Localidad</span>
+                    <span class="field-value">${localidad}</span>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Dirección</span>
+                    <span class="field-value">${direccionLines.join('<br>')}</span>
+                </div>
             </div>
 
-            <div class="campo">
-                <span class="etiqueta">📞 Teléfono de contacto</span>
-                <span class="valor">${telefonoFormateado}</span>
-            </div>
+            <hr class="divider" />
 
-            <div class="campo">
-                <span class="etiqueta">📅 Periodo de atención</span>
-                <span class="valor">${fechaDisplay}</span>
-            </div>
-
-            <div class="campo">
-                <span class="etiqueta">🕒 Horario de atención</span>
-                <span class="valor">${horario}</span>
-            </div>
-
-            <div class="campo">
-                <span class="etiqueta">Comité de Contraloría Social</span>
-                <span class="valor">${comite}</span>
-            </div>
-
-            <div class="campo">
-                <span class="etiqueta">Referencia</span>
-                <span class="valor">${referencia}</span>
+            <div class="info-block">
+                <div class="block-title">📞 Contacto</div>
+                <span class="field-value">${telefonoFormateado}</span>
             </div>
 
             ${mapaHtml}
@@ -519,7 +511,7 @@ function formatDateLongES(valor){
     if (!fecha || isNaN(fecha)) return (typeof valor === 'string') ? valor : 'No disponible';
 
     const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
-    return fecha.toLocaleDateString('es-MX', opciones).replace(/ de (\d{4})$/, ' $1');
+    return fecha.toLocaleDateString('es-MX', opciones);
 }
 
 function formatDateRangeES(inicio, fin) {
@@ -537,7 +529,7 @@ function formatDateRangeES(inicio, fin) {
     const anioFin = dateEnd.getFullYear();
 
     if (anioInicio === anioFin && mesInicio === mesFin) {
-        return `Del ${diaInicio} al ${diaFin} de ${mesInicio} ${anioInicio}`;
+        return `Del ${diaInicio} al ${diaFin} de ${mesInicio} de ${anioInicio}`;
     }
 
     if (anioInicio === anioFin) {
@@ -545,4 +537,11 @@ function formatDateRangeES(inicio, fin) {
     }
 
     return `Del ${diaInicio} de ${mesInicio} ${anioInicio} al ${diaFin} de ${mesFin} ${anioFin}`;
+}
+
+function formatAddressLines(referencia) {
+    const texto = String(referencia || '').trim();
+    if (!texto) return ['No disponible'];
+    const partes = texto.split(/[,;]+/).map(p => p.trim()).filter(Boolean);
+    return partes.length ? partes : [texto];
 }
