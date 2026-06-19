@@ -53,16 +53,6 @@ document
 
     });
 
-const socialToggle = document.getElementById('socialToggle');
-const socialMenu = document.getElementById('socialMenu');
-if (socialToggle && socialMenu) {
-    socialToggle.addEventListener('click', () => {
-        const isOpen = socialMenu.classList.toggle('open');
-        socialToggle.setAttribute('aria-expanded', String(isOpen));
-        socialMenu.setAttribute('aria-hidden', String(!isOpen));
-    });
-}
-
 // =====================
 // FORMATEAR FECHA
 // =====================
