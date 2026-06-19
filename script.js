@@ -173,7 +173,7 @@ function formatearHora(valor) {
                 (totalSegundos % 3600) / 60
             );
 
-        return `${horas.toString().padStart(2, "0")}:${minutos.toString().padStart(2, "0")} hrs`;
+        return `${horas.toString().padStart(2, "0")}:${minutos.toString().padStart(2, "0")}`;
     }
 
     const texto = String(valor).trim();
@@ -184,10 +184,30 @@ function formatearHora(valor) {
     if (!isNaN(fecha)) {
         const horas = fecha.getHours().toString().padStart(2, "0");
         const minutos = fecha.getMinutes().toString().padStart(2, "0");
-        return `${horas}:${minutos} hrs`;
+        return `${horas}:${minutos}`;
+    }
+
+    const coincidencia = texto.match(/(\d{1,2}):(\d{2})/);
+    if (coincidencia) {
+        return `${coincidencia[1].padStart(2, "0")}:${coincidencia[2]}`;
     }
 
     return texto;
+}
+
+function formatTelefono(valor) {
+    const texto = String(valor || "").trim();
+    const numeros = texto.replace(/\D/g, "");
+
+    if (numeros.length === 10) {
+        return `${numeros.slice(0, 3)} ${numeros.slice(3, 6)} ${numeros.slice(6)}`;
+    }
+
+    if (numeros.length >= 7) {
+        return numeros.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+    }
+
+    return texto || "No disponible";
 }
 
 function parseFechaDate(valor) {
@@ -383,23 +403,28 @@ function buscarCCT() {
     const municipio = getVal(registro, 'municipio', 'Municipio') || 'No disponible';
     const localidad = getVal(registro, 'localidad', 'Localidad') || 'No disponible';
     const telefono = getVal(registro, 'telefono', 'tel', 'telefono_contacto', 'telefono_de_contacto', 'telefono de contacto', 'telefono_contacto_escuela', 'celular') || 'No disponible';
+    const telefonoFormateado = formatTelefono(telefono);
 
     let fechaDisplay = 'No disponible';
     if (fi && ff) {
         fechaDisplay = `Del ${formatDateLongES(fi)} al ${formatDateLongES(ff)}`;
     } else if (fi) {
-        fechaDisplay = `Inicio: ${formatDateLongES(fi)}`;
+        fechaDisplay = `Del ${formatDateLongES(fi)}`;
     } else if (ff) {
-        fechaDisplay = `Final: ${formatDateLongES(ff)}`;
+        fechaDisplay = `Hasta ${formatDateLongES(ff)}`;
     }
 
-    const horario = (hi || hf)
-        ? hi && hf
-            ? `${formatearHora(hi) || 'No disponible'} - ${formatearHora(hf) || 'No disponible'}`
-            : hi
-                ? `Inicio: ${formatearHora(hi)}`
-                : `Final: ${formatearHora(hf)}`
-        : 'No disponible';
+    let horario = 'No disponible';
+    const horaInicio = formatearHora(hi);
+    const horaFin = formatearHora(hf);
+    if (horaInicio && horaFin) {
+        horario = `${horaInicio} a ${horaFin} hrs`;
+    } else if (horaInicio) {
+        horario = `${horaInicio} hrs`;
+    } else if (horaFin) {
+        horario = `${horaFin} hrs`;
+    }
+
     const comite = getVal(registro, 'estatus_comite', 'comite', 'Comité') || 'No disponible';
     const referencia = getVal(registro, 'referencia', 'referencia_direccion') || 'No disponible';
 
@@ -441,7 +466,7 @@ function buscarCCT() {
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Sede de Atención</span>
+                <span class="etiqueta">📍 Sede de Atención</span>
                 <span class="valor">${sede}</span>
             </div>
 
@@ -456,17 +481,17 @@ function buscarCCT() {
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Teléfono de contacto</span>
-                <span class="valor">${telefono}</span>
+                <span class="etiqueta">📞 Teléfono de contacto</span>
+                <span class="valor">${telefonoFormateado}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Fecha de inicio / final</span>
+                <span class="etiqueta">📅 Periodo de atención</span>
                 <span class="valor">${fechaDisplay}</span>
             </div>
 
             <div class="campo">
-                <span class="etiqueta">Horario inicio / final</span>
+                <span class="etiqueta">🕒 Horario de atención</span>
                 <span class="valor">${horario}</span>
             </div>
 

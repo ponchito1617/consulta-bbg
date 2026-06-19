@@ -433,6 +433,123 @@ main{
     border-bottom:none;
 }
 
+.campo .etiqueta{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.social-float{
+
+    position:fixed;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:200;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+}
+
+.social-toggle{
+
+    width:60px;
+    height:60px;
+    border:none;
+    border-radius:18px;
+    background:#ffffff;
+    color:#333;
+    box-shadow:0 15px 30px rgba(0,0,0,.1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.25s ease, transform .25s ease;
+}
+
+.social-toggle:hover{
+
+    transform:translateX(2px);
+}
+
+.social-menu{
+
+    width:64px;
+    overflow:hidden;
+    border-radius:22px;
+    background:#ffffff;
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+    transition:width .25s ease;
+}
+
+.social-float:hover .social-menu,
+.social-menu.open{
+
+    width:220px;
+}
+
+.social-item{
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 16px;
+    color:#1f1f1f;
+    text-decoration:none;
+    transition:.2s ease;
+}
+
+.social-item .icon{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:28px;
+    height:28px;
+    font-size:18px;
+}
+
+.social-item .label{
+
+    opacity:0;
+    white-space:nowrap;
+    font-weight:700;
+    transition:opacity .2s ease .1s;
+}
+
+.social-float:hover .social-item .label,
+.social-menu.open .label{
+
+    opacity:1;
+}
+
+.social-item.whatsapp{
+
+    border-left:4px solid #25D366;
+}
+
+.social-item.facebook{
+
+    border-left:4px solid #1877F2;
+}
+
+.social-item:hover{
+
+    background:rgba(241,241,241,.95);
+}
+
+.social-item.whatsapp .icon{
+
+    color:#25D366;
+}
+
+.social-item.facebook .icon{
+
+    color:#1877F2;
+}
+
 .hidden{
 
     display:none;
@@ -531,9 +648,6 @@ main{
     text-align: center;
     font-weight: 600;
     color: #9D2449;
-}
-
-    box-sizing:border-box;
 }
 
 .login-form input:focus{
@@ -670,94 +784,6 @@ footer{
 .monitor-resultado li span{
     flex:1 1 220px;
     min-width:0;
-}
-
-/* Floating social bar */
-.social-float{
-    position:fixed;
-    left:18px;
-    bottom:18px;
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    z-index:1200;
-}
-.social-toggle{
-    width:56px;
-    height:56px;
-    border:none;
-    border-radius:50%;
-    background:var(--vino);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:24px;
-    cursor:pointer;
-    box-shadow:0 10px 22px rgba(0,0,0,.18);
-    transition:transform .2s ease, background .2s ease;
-}
-.social-toggle:hover{
-    transform:translateX(2px);
-    background:var(--vino-sec);
-}
-.social-menu{
-    display:none;
-    flex-direction:column;
-    gap:10px;
-    padding:8px;
-    border-radius:28px;
-    border:1px solid rgba(98,17,50,.14);
-    background:rgba(255,255,255,.98);
-    box-shadow:0 18px 45px rgba(0,0,0,.12);
-    min-width:200px;
-}
-.social-menu.open{
-    display:flex;
-}
-.social-item{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background:rgba(0,0,0,0.08);
-    color:var(--texto);
-    padding:10px 16px;
-    border-radius:999px;
-    text-decoration:none;
-    transition:transform .18s ease, opacity .18s ease, background .18s ease;
-}
-.social-item:hover{
-    transform:translateX(2px);
-    opacity:.98;
-}
-.social-item .icon{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:white;
-    flex-shrink:0;
-}
-.social-item .label{
-    display:none;
-    font-weight:700;
-    font-size:14px;
-}
-.social-menu.open .social-item .label{
-    display:inline-block;
-}
-.social-item.facebook .icon{background:#1877F2;}
-.social-item.whatsapp .icon{background:#25D366;}
-@media (max-width: 900px) {
-    .social-menu{
-        min-width:unset;
-        width:auto;
-    }
-    .social-menu.open .social-item .label{display:none;}
 }
 
 @media (max-width: 900px) {
