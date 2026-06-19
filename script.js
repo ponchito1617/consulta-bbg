@@ -397,7 +397,7 @@ function buscarCCT() {
 
     let fechaDisplay = 'No disponible';
     if (fi && ff) {
-        fechaDisplay = `Del ${formatDateLongES(fi)} al ${formatDateLongES(ff)}`;
+        fechaDisplay = formatDateRangeES(fi, ff);
     } else if (fi) {
         fechaDisplay = `Del ${formatDateLongES(fi)}`;
     } else if (ff) {
@@ -507,14 +507,7 @@ function buscarCCT() {
 }
 
 function formatDateLongES(valor){
-    // Return long spanish date or range; handles Excel serials, ISO and dd/mm/yyyy
     if (valor === null || valor === undefined || valor === "") return "No disponible";
-
-    // Range handling if value contains a separator
-    if (typeof valor === 'string' && valor.includes(' - ')){
-        const parts = valor.split(' - ').map(p=>p.trim());
-        return `Del ${formatDateLongES(parts[0])} al ${formatDateLongES(parts[1])}`;
-    }
 
     let fecha = null;
     if (typeof valor === 'number' && !isNaN(valor)) {
@@ -526,5 +519,30 @@ function formatDateLongES(valor){
     if (!fecha || isNaN(fecha)) return (typeof valor === 'string') ? valor : 'No disponible';
 
     const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
-    return fecha.toLocaleDateString('es-MX', opciones);
+    return fecha.toLocaleDateString('es-MX', opciones).replace(/ de (\d{4})$/, ' $1');
+}
+
+function formatDateRangeES(inicio, fin) {
+    const dateStart = parseFechaDate(inicio);
+    const dateEnd = parseFechaDate(fin);
+    if (!dateStart || !dateEnd || isNaN(dateStart) || isNaN(dateEnd)) {
+        return `Del ${formatDateLongES(inicio)} al ${formatDateLongES(fin)}`;
+    }
+
+    const diaInicio = dateStart.getDate();
+    const diaFin = dateEnd.getDate();
+    const mesInicio = dateStart.toLocaleDateString('es-MX', { month: 'long' });
+    const mesFin = dateEnd.toLocaleDateString('es-MX', { month: 'long' });
+    const anioInicio = dateStart.getFullYear();
+    const anioFin = dateEnd.getFullYear();
+
+    if (anioInicio === anioFin && mesInicio === mesFin) {
+        return `Del ${diaInicio} al ${diaFin} de ${mesInicio} ${anioInicio}`;
+    }
+
+    if (anioInicio === anioFin) {
+        return `Del ${diaInicio} de ${mesInicio} al ${diaFin} de ${mesFin} ${anioInicio}`;
+    }
+
+    return `Del ${diaInicio} de ${mesInicio} ${anioInicio} al ${diaFin} de ${mesFin} ${anioFin}`;
 }
