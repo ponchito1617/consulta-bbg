@@ -1037,10 +1037,10 @@ footer{
 
 .social-item i { font-size: 24px; color: #fff; line-height: 1; display: block; transition: transform .12s ease, filter .12s ease; }
 
-.social-item svg { width: 24px; height: 24px; color: #fff; fill: currentColor; transition: transform .12s ease, filter .12s ease; }
+.social-item svg, .fab-option svg { width: 24px; height: 24px; color: #fff; fill: currentColor; transition: transform .12s ease, filter .12s ease; }
 
 /* realce visual del icono sin cambiar colores del botón */
-.social-item:hover i, .social-item:hover svg { transform: scale(1.12); filter: drop-shadow(0 6px 12px rgba(0,0,0,.18)); }
+.social-item:hover i, .social-item:hover svg, .fab-option:hover svg { transform: scale(1.12); filter: drop-shadow(0 6px 12px rgba(0,0,0,.18)); }
 
 /* esconder cualquier label o nodos extras */
 .social-item .label {
