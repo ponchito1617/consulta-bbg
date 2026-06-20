@@ -494,7 +494,7 @@ function buscarCCT() {
             <hr class="divider" />
 
             <div class="info-block">
-                <div class="block-title">📞 Contacto institucional</div>
+                <div class="block-title">📞 Contacto </div>
                 <span class="field-value">Si realizaste tu solicitud a la Beca Bienestar “Rita Cetina” nivel primaria y aún no has recogido tu tarjeta, te invitamos a comunicarte con nosotros de lunes a viernes para recibir orientación y asistencia.</span>
                 <span class="field-value">Horario de atención: lunes a viernes</span>
                 <span class="field-value">${telefonoLink}</span>
