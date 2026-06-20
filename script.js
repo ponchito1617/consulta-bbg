@@ -394,6 +394,10 @@ function buscarCCT() {
     const localidad = getVal(registro, 'localidad', 'Localidad') || 'No disponible';
     const telefono = getVal(registro, 'telefono', 'tel', 'telefono_contacto', 'telefono_de_contacto', 'telefono de contacto', 'telefono_contacto_escuela', 'celular') || 'No disponible';
     const telefonoFormateado = formatTelefono(telefono);
+    const telefonoHref = telefono.replace(/\D/g, '');
+    const telefonoLink = telefonoHref.length >= 7
+        ? `<a href="tel:${telefonoHref}" class="btn-mapa" style="display:inline-block; margin-top:8px;">Llamar: ${telefonoFormateado}</a>`
+        : telefonoFormateado;
 
     let fechaDisplay = 'No disponible';
     if (fi && ff) {
@@ -490,8 +494,10 @@ function buscarCCT() {
             <hr class="divider" />
 
             <div class="info-block">
-                <div class="block-title">📞 Contacto</div>
-                <span class="field-value">${telefonoFormateado}</span>
+                <div class="block-title">📞 Contacto institucional</div>
+                <span class="field-value">Si realizaste tu solicitud a la Beca Bienestar “Rita Cetina” nivel primaria y aún no has recogido tu tarjeta, te invitamos a comunicarte con nosotros de lunes a viernes para recibir orientación y asistencia.</span>
+                <span class="field-value">Horario de atención: lunes a viernes</span>
+                <span class="field-value">${telefonoLink}</span>
             </div>
 
             ${mapaHtml}
