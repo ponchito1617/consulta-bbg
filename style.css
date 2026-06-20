@@ -1035,14 +1035,19 @@ footer{
 
 .social-item > .icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 
-.social-item i { font-size: 20px; color: #fff; line-height: 1; display: block; }
+.social-item i { font-size: 24px; color: #fff; line-height: 1; display: block; transition: transform .12s ease, filter .12s ease; }
+
+.social-item svg { width: 24px; height: 24px; color: #fff; fill: currentColor; transition: transform .12s ease, filter .12s ease; }
+
+/* realce visual del icono sin cambiar colores del botón */
+.social-item:hover i, .social-item:hover svg { transform: scale(1.12); filter: drop-shadow(0 6px 12px rgba(0,0,0,.18)); }
 
 /* esconder cualquier label o nodos extras */
-.social-item .label,
-.social-item span,
-.social-item div:not(.icon) {
+.social-item .label {
     display: none !important;
 }
+
+
 
 .social-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,.25); }
 .social-item:active { transform: scale(.95); }
@@ -1050,4 +1055,108 @@ footer{
 /* Responsive: ocultar en pantallas pequeñas */
 @media (max-width: 768px) {
     .social-float { display: none; }
+}
+
+/* ============================================
+   FIX DEFINITIVO (BLOQUEA TODOS LOS ERRORES)
+============================================ */
+
+/* ✅ FORZAR SOLO UN LADO (IZQUIERDA) */
+.social-float{
+    position: fixed !important;
+
+    top: 50% !important;
+
+    left: calc(50% - 600px) !important; /* alineado al panel */
+    right: auto !important; /* 🔴 elimina derecha */
+
+    transform: translateY(-50%) !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+
+    z-index: 9999 !important;
+}
+
+/* ❌ ELIMINAR CUALQUIER CLON A LA DERECHA */
+body > .social-float:last-of-type:not(:first-of-type) {
+    display: none !important;
+}
+
+/* ✅ BOTONES LIMPIOS */
+.social-item{
+    width: 56px !important;
+    height: 56px !important;
+
+    background: #621132 !important;
+    border-radius: 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-shadow: 0 8px 18px rgba(0,0,0,.18) !important;
+
+    overflow: hidden !important;
+}
+
+/* ✅ ICONO */
+.social-item i{
+    font-size: 20px !important;
+    color: #fff !important;
+}
+
+
+/* ✅ HOVER SUAVE */
+.social-item:hover{
+    transform: translateY(-3px) scale(1.05) !important;
+}
+
+/* ✅ CLICK */
+.social-item:active{
+    transform: scale(0.95) !important;
+}
+
+/* ===============================
+   ✅ FAB SOLO MOBILE
+================================ */
+
+.fab{
+    display: none !important;
+}
+
+@media (max-width: 768px){
+    .fab{
+        display: block !important;
+    }
+
+    .social-float{
+        display: none !important;
+    }
+}
+/* ✅ FIX FINAL ICONOS (VISIBLE Y ESTABLE) */
+
+.social-item .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* ✅ FIX FINAL DEFINITIVO ICONOS */
+
+.social-item i {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+    font-size: 22px;
+    color: #ffffff;
+    display: block;
+}
+
+.social-item i {
+    font-size: 22px;
+    color: #ffffff;
+    display: block;
 }
