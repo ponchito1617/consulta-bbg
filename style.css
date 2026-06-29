@@ -154,6 +154,114 @@ main{
     font-size:18px;
 }
 
+/* Estilo del banner institucional debajo del encabezado principal */
+.banner-aviso{
+    position: relative;
+    background: linear-gradient(180deg, #fff9ed 0%, #fff1d0 100%);
+    border:1px solid #f0c36d;
+    border-left: 6px solid #d98b27;
+    color:#3f2d18;
+    box-shadow:0 16px 34px rgba(0,0,0,.08);
+    border-radius:24px;
+    padding:26px 28px 26px 22px;
+    margin:34px auto 0;
+    max-width:920px;
+}
+
+.banner-aviso-top{
+    gap:16px;
+}
+
+.banner-aviso-icon{
+    min-width:48px;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:rgba(217,139,39,.14);
+    color:#d97f1a;
+    font-size:1.35rem;
+    flex-shrink:0;
+    margin-top:3px;
+}
+
+.banner-aviso-text .alert-heading{
+    font-size:1.15rem;
+    font-weight:700;
+    margin-bottom:0.35rem;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+}
+
+.banner-aviso-emphasis{
+    font-size:1rem;
+    font-weight:700;
+    color:#3f2d18;
+    margin-bottom:0.65rem;
+}
+
+.banner-aviso-note{
+    margin-top:1rem;
+    font-size:0.92rem;
+    color:#5b4628;
+    opacity:.85;
+}
+
+.banner-aviso p{
+    margin-bottom:0.45rem;
+    line-height:1.75;
+    font-size:0.98rem;
+}
+
+.banner-aviso{
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: avisoFadeIn 0.75s ease-out 0.2s forwards;
+}
+
+@keyframes avisoFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.banner-aviso .btn-close{
+    position:absolute;
+    top:18px;
+    right:18px;
+    opacity: .75;
+    transition: opacity .18s ease, transform .18s ease;
+}
+
+.banner-aviso .btn-close:hover,
+.banner-aviso .btn-close:focus{
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+@media (max-width:920px){
+    .banner-aviso-top{
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .banner-aviso-icon{
+        margin-top: 0;
+    }
+}
+
+@media (max-width:720px){
+    .banner-aviso{
+        padding:20px 20px 20px 18px;
+    }
+
+    .banner-aviso-text .alert-heading{
+        font-size:1rem;
+    }
+}
+
 .buscador{
 
     margin-top:45px;

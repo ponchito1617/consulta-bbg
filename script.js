@@ -28,6 +28,34 @@ document
     .addEventListener("click", buscarCCT);
 
 // =====================
+// CERRAR AVISO INSTITUCIONAL
+// =====================
+
+(function inicializarAvisoTemporal() {
+    const aviso = document.getElementById("avisoInstitucional");
+    if (!aviso) return;
+
+    const fechaExpira = aviso.dataset.expire;
+    if (fechaExpira) {
+        const expira = new Date(`${fechaExpira}T23:59:59`);
+        const ahora = new Date();
+        if (ahora > expira) {
+            aviso.style.display = "none";
+            return;
+        }
+    }
+
+    const avisoCerrar = aviso.querySelector(".btn-close");
+    if (avisoCerrar) {
+        avisoCerrar.addEventListener("click", function () {
+            aviso.classList.remove("show");
+            aviso.setAttribute("aria-hidden", "true");
+            aviso.style.display = "none";
+        });
+    }
+})();
+
+// =====================
 // ENTER
 // =====================
 
